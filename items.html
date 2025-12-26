@@ -2,247 +2,255 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Itens — Compartilhaí</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Compartilhaí — Itens</title>
 
   <style>
-    body {
-      background:#0b1020;
-      color:#fff;
+    :root{
+      --bg:#070a14;
+      --panel:#0c1226;
+      --line: rgba(255,255,255,.12);
+      --txt:#fff;
+      --muted: rgba(255,255,255,.72);
+      --brand:#4f7cff;
+      --danger:#ff4f4f;
+      --ok:#2ecc71;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh;
       font-family: Arial, sans-serif;
-      margin:0;
+      color:var(--txt);
+      background:
+        radial-gradient(1200px 600px at 15% 0%, rgba(79,124,255,.25), transparent 60%),
+        radial-gradient(900px 500px at 90% 20%, rgba(0,255,199,.12), transparent 55%),
+        var(--bg);
     }
-
-    .topbar {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:16px;
-      background:#0f1833;
-      position:sticky;
-      top:0;
-      z-index:10;
-    }
-
-    .topbar a, .topbar button {
-      color:#fff;
-      text-decoration:none;
-      border:0;
-      background:#4f7cff;
-      padding:10px 14px;
-      border-radius:10px;
-      font-weight:700;
-      cursor:pointer;
-    }
-
-    .wrap {
-      padding:18px;
-      max-width:1200px;
-      margin:0 auto;
-    }
-
-    .filters {
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
+    .wrap{max-width:1100px; margin:0 auto; padding:18px 16px 40px;}
+    .top{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
       margin-bottom:14px;
     }
-
-    .chip {
-      background:#121a35;
-      border:1px solid rgba(255,255,255,.12);
-      color:#fff;
-      padding:8px 14px;
-      border-radius:999px;
-      cursor:pointer;
-      font-size:14px;
+    .brand{
+      font-weight:900; letter-spacing:-.2px; font-size:18px;
     }
-
-    .chip.active {
-      background:#4f7cff;
-      border-color:#4f7cff;
-    }
-
-    .grid {
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap:14px;
-    }
-
-    .card {
-      background:#121a35;
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:16px;
-      padding:14px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
-    .img {
-      width:100%;
-      aspect-ratio:4/3;
+    .btn{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color: var(--txt);
+      padding:10px 14px;
       border-radius:12px;
-      background:#1b2a55;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:700;
-      opacity:.6;
-    }
-
-    .title {
-      font-weight:800;
-      font-size:16px;
-    }
-
-    .muted {
-      opacity:.75;
-      font-size:13px;
-    }
-
-    .row {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      margin-top:auto;
-    }
-
-    .btn2 {
-      background:#1b2a55;
-      border:1px solid rgba(255,255,255,.18);
-      padding:8px 12px;
-      border-radius:10px;
-      color:#fff;
-      cursor:pointer;
       text-decoration:none;
-      font-size:14px;
-      font-weight:700;
-      white-space:nowrap;
+      cursor:pointer;
+      font-weight:800;
+    }
+    .btn.primary{
+      background: linear-gradient(180deg, var(--brand), #3f68ff);
+      border-color: transparent;
+      box-shadow: 0 12px 30px rgba(79,124,255,.25);
+    }
+    .panel{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      border-radius:18px;
+      padding:16px;
+    }
+    .chips{display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 14px;}
+    .chip{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-weight:800;
+      cursor:pointer;
+      font-size:13px;
+      user-select:none;
+    }
+    .chip.active{
+      background: rgba(79,124,255,.18);
+      border-color: rgba(79,124,255,.35);
+      color:#fff;
+    }
+
+    .status{
+      margin:10px 0 0;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      font-size:13px;
+      line-height:1.35;
+      white-space: pre-wrap;
+    }
+    .status.ok{border-color: rgba(46,204,113,.35); color: rgba(46,204,113,.95);}
+    .status.err{border-color: rgba(255,79,79,.35); color: rgba(255,79,79,.95);}
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+    .card{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius:14px;
+      padding:14px;
+    }
+    .title{font-weight:900; margin:0 0 6px;}
+    .meta{color:var(--muted); font-size:13px; margin:0 0 10px;}
+    .price{font-weight:900; color:var(--brand); margin-top:8px;}
+    .empty{
+      color: var(--muted);
+      padding:18px;
+      text-align:center;
+      border:1px dashed rgba(255,255,255,.25);
+      border-radius:14px;
+      margin-top:12px;
+      background: rgba(255,255,255,.03);
     }
   </style>
 </head>
-
 <body>
-
-  <div class="topbar">
-    <div>
-      <strong>Compartilhaí</strong>
-      <span style="opacity:.7;"> / Itens disponíveis</span>
-    </div>
-    <div style="display:flex; gap:8px;">
-      <a href="add-item.html">+ Adicionar item</a>
-      <button id="logoutBtn" style="background:#0f1833;">Sair</button>
-    </div>
-  </div>
-
   <div class="wrap">
 
-    <div class="filters">
-      <button class="chip active" data-cat="Todos">Todos</button>
-      <button class="chip" data-cat="Ferramentas">Ferramentas</button>
-      <button class="chip" data-cat="Cozinha">Cozinha</button>
-      <button class="chip" data-cat="Viagem">Viagem</button>
-      <button class="chip" data-cat="Eletrônicos">Eletrônicos</button>
-      <button class="chip" data-cat="Outros">Outros</button>
+    <div class="top">
+      <div class="brand">Compartilhaí / Itens</div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <a class="btn primary" href="add-item.html">+ Adicionar item</a>
+        <button class="btn" id="logoutBtn">Sair</button>
+      </div>
     </div>
 
-    <div id="status" class="muted" style="margin-bottom:12px;">
-      Carregando itens…
-    </div>
+    <div class="panel">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+        <div style="font-weight:900;">Itens disponíveis</div>
+        <button class="btn" id="reloadBtn">Recarregar</button>
+      </div>
 
-    <div id="grid" class="grid"></div>
+      <div class="chips" id="chips">
+        <span class="chip active" data-cat="Todos">Todos</span>
+        <span class="chip" data-cat="Ferramentas">Ferramentas</span>
+        <span class="chip" data-cat="Cozinha">Cozinha</span>
+        <span class="chip" data-cat="Viagem">Viagem</span>
+        <span class="chip" data-cat="Eletrônicos">Eletrônicos</span>
+        <span class="chip" data-cat="Outros">Outros</span>
+      </div>
+
+      <div id="status" class="status">Carregando itens...</div>
+
+      <div id="list" class="grid" style="display:none;"></div>
+      <div id="empty" class="empty" style="display:none;">
+        Nenhum item cadastrado ainda.
+      </div>
+    </div>
   </div>
 
+  <!-- ✅ IMPORTANTE: o firebases.js tem que carregar ANTES do script abaixo -->
   <script src="firebases.js"></script>
 
   <script>
-    const grid = document.getElementById("grid");
     const statusEl = document.getElementById("status");
+    const listEl = document.getElementById("list");
+    const emptyEl = document.getElementById("empty");
+    const reloadBtn = document.getElementById("reloadBtn");
     const logoutBtn = document.getElementById("logoutBtn");
+    const chips = document.getElementById("chips");
 
-    let allItems = [];
     let currentCat = "Todos";
+    let allItems = [];
 
-    function money(v){
-      const n = Number(v);
-      if (Number.isNaN(n)) return v;
-      return n.toLocaleString("pt-BR", {
-        style:"currency",
-        currency:"BRL"
+    function setStatus(msg, type){
+      statusEl.textContent = msg;
+      statusEl.className = "status" + (type ? " " + type : "");
+    }
+
+    function withTimeout(promise, ms, label){
+      return new Promise((resolve, reject) => {
+        const t = setTimeout(() => reject(new Error(label + " (timeout)")), ms);
+        promise.then(v => { clearTimeout(t); resolve(v); })
+               .catch(e => { clearTimeout(t); reject(e); });
       });
     }
 
     function render(){
-      const items = currentCat === "Todos"
+      const items = (currentCat === "Todos")
         ? allItems
-        : allItems.filter(i =>
-            (i.category || "").toLowerCase() === currentCat.toLowerCase()
-          );
+        : allItems.filter(it => (it.category || "Outros") === currentCat);
 
-      if (!items.length) {
-        grid.innerHTML = "";
-        statusEl.textContent = "Nenhum item cadastrado ainda.";
+      listEl.innerHTML = "";
+      if (!items.length){
+        listEl.style.display = "none";
+        emptyEl.style.display = "block";
         return;
       }
 
-      statusEl.textContent = `${items.length} item(ns) disponíveis`;
+      emptyEl.style.display = "none";
+      listEl.style.display = "grid";
 
-      grid.innerHTML = items.map(i => `
-        <div class="card">
-          <div class="img">IMAGEM PADRÃO</div>
-
-          <div class="title">${i.name || "Item"}</div>
-
-          <div class="muted">
-            ${i.category || "—"} • ${money(i.pricePerDay)} / dia
-          </div>
-
-          <div class="muted" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-            ${i.notes || ""}
-          </div>
-
-          <div class="row">
-            <span class="muted">Disponível</span>
-            <a class="btn2" href="reservar.html?id=${i.id}">
-              Reservar
-            </a>
-          </div>
-        </div>
-      `).join("");
+      items.forEach(it => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <div class="title">${escapeHtml(it.name || "Item sem nome")}</div>
+          <div class="meta">Categoria: <b>${escapeHtml(it.category || "Outros")}</b></div>
+          <div class="meta">${escapeHtml(it.notes || "")}</div>
+          <div class="price">R$ ${Number(it.pricePerDay || 0).toFixed(0)} / dia</div>
+        `;
+        listEl.appendChild(div);
+      });
     }
 
-    document.querySelectorAll(".chip").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".chip").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        currentCat = btn.dataset.cat;
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, m => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
+      }[m]));
+    }
+
+    async function loadItems(){
+      setStatus("Carregando itens...", "");
+      listEl.style.display = "none";
+      emptyEl.style.display = "none";
+
+      try{
+        // 1) Espera Firebase ficar pronto (se der erro, ele APARECE aqui)
+        await withTimeout(window.waitFirebaseReady(12000), 13000, "Firebase não ficou pronto");
+
+        // 2) Puxa itens (se permissão/erro de Firestore, também aparece)
+        const items = await withTimeout(window.ItemsAPI.listItems(), 12000, "Falha ao listar itens");
+        allItems = Array.isArray(items) ? items : [];
+
+        setStatus("✅ Itens carregados: " + allItems.length, "ok");
         render();
-      });
+
+      } catch(err){
+        // Mostra o erro na tela (pra parar de ficar no escuro)
+        setStatus("❌ ERRO AO CARREGAR:\n" + (err && err.message ? err.message : String(err)), "err");
+      }
+    }
+
+    chips.addEventListener("click", (e) => {
+      const b = e.target.closest(".chip");
+      if (!b) return;
+      document.querySelectorAll(".chip").forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      currentCat = b.dataset.cat;
+      render();
     });
 
+    reloadBtn.addEventListener("click", loadItems);
+
     logoutBtn.addEventListener("click", async () => {
-      await AuthAPI.logout();
+      try{
+        if (window.AuthAPI) await window.AuthAPI.logout();
+      } catch(e){}
       window.location.href = "login.html";
     });
 
-    AuthAPI.onChange(async (user) => {
-      if (!user) {
-        window.location.href = "login.html";
-        return;
-      }
-
-      try {
-        allItems = await ItemsAPI.listItems();
-        render();
-      } catch (err) {
-        statusEl.textContent = "Erro ao carregar itens.";
-        console.error(err);
-      }
-    });
+    // carrega ao abrir
+    loadItems();
   </script>
-
 </body>
 </html>
