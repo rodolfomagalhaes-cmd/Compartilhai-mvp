@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sou morador — Compartilhaí</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { background:#0b1020; color:#fff; font-family: Arial, sans-serif; margin:0; }
+    .wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:16px; }
+    .box { width:100%; max-width:420px; background:#121a35; border:1px solid rgba(255,255,255,.12); border-radius:16px; padding:18px; }
+    h1 { margin:0 0 6px; font-size:34px; }
+    .muted { opacity:.8; font-size:13px; margin-bottom:14px; }
+    label { display:block; font-size:13px; opacity:.85; margin:10px 0 6px; }
+    input { width:100%; padding:12px; border-radius:10px; border:0; outline:0; }
+    button { width:100%; margin-top:14px; padding:12px; border-radius:10px; border:0; background:#4f7cff; color:#fff; font-weight:800; cursor:pointer; }
+    button:disabled { opacity:.6; cursor:not-allowed; }
+    .status { margin-top:10px; font-size:13px; opacity:.9; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="box">
+      <h1>Sou morador</h1>
+      <div class="muted">Entre para cadastrar ou ver itens do seu condomínio.</div>
+
+      <form id="form">
+        <label>E-mail</label>
+        <input id="email" type="email" placeholder="seu@email.com" required />
+
+        <label>Senha</label>
+        <input id="pass" type="password" placeholder="mínimo 6 caracteres" minlength="6" required />
+
+        <button id="btn" type="submit">Entrar / Criar conta</button>
+        <div id="status" class="status"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- IMPORTANTE: aqui é firebases.js (com S) -->
+  <script src="./firebases.js"></script>
+
+  <script>
+    const form = document.getElementById("form");
+    const emailEl = document.getElementById("email");
+    const passEl = document.getElementById("pass");
+    const btn = document.getElementById("btn");
+    const statusEl = document.getElementById("status");
+
+    function setStatus(msg) { statusEl.textContent = msg || ""; }
+
+    // Espera o Firebase carregar (sem depender de waitFirebaseReady)
+    function waitFirebaseReady(timeoutMs = 15000) {
+      return new Promise((resolve, reject) => {
+        const start = Date.now();
+        (function tick(){
+          if (window.__FIREBASE_READY__ && window.auth) return resolve();
+          if (Date.now() - start > timeoutMs) return reject(new Error("Firebase não carregou a tempo."));
+          setTimeout(tick, 80);
+        })();
+      });
+    }
+
+    async function goIfLogged() {
+      try {
+        await waitFirebaseReady(15000);
+        // Se já está logado, manda direto pra lista
+        window.AuthAPI.onChange((user) => {
+          if (user) window.location.href = "items.html";
+        });
+      } catch (e) {
+        setStatus("Erro iniciando: " + (e?.message || e));
+      }
+    }
+
+    goIfLogged();
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = (emailEl.value || "").trim();
+      const pass = passEl.value || "";
+
+      if (!email || !pass) {
+        setStatus("Preencha e-mail e senha.");
+        return;
+      }
+
+      btn.disabled = true;
+      setStatus("Entrando…");
+
+      try {
+        await waitFirebaseReady(15000);
+
+        // 1) tenta login
+        try {
+          await window.auth.signInWithEmailAndPassword(email, pass);
+        } catch (err) {
+          // 2) se não existir, cria
+          const code = err?.code || "";
+          if (code === "auth/user-not-found" || code === "auth/invalid-credential" || code === "auth/wrong-password") {
+            await window.auth.createUserWithEmailAndPassword(email, pass);
+          } else {
+            throw err;
+          }
+        }
+
+        // se logou/criou, manda pra lista
+        window.location.href = "items.html";
+      } catch (err) {
+        setStatus("Erro: " + (err?.message || err));
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

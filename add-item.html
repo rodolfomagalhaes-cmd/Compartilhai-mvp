@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adicionar item — Compartilhaí</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { background:#0b1020; color:#fff; font-family: Arial, sans-serif; margin:0; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; padding:16px; background:#0f1833; }
+    .wrap { padding:16px; max-width:700px; margin:0 auto; }
+    .box { background:#121a35; border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:16px; }
+    label { display:block; font-size:13px; opacity:.85; margin:10px 0 6px; }
+    input, select, textarea { width:100%; padding:12px; border-radius:10px; border:0; outline:0; }
+    textarea{ min-height:90px; }
+    .row { display:flex; gap:10px; }
+    .row > div { flex:1; }
+    button { width:100%; margin-top:14px; padding:12px; border-radius:10px; border:0; background:#4f7cff; color:#fff; font-weight:800; cursor:pointer; }
+    button:disabled { opacity: .6; cursor: not-allowed; }
+    .muted { opacity:.8; font-size:13px; }
+    a { color:#fff; text-decoration:none; opacity:.9; }
+    .tag { display:inline-block; margin-top:10px; padding:8px 10px; border:1px solid rgba(255,255,255,.12); border-radius:999px; background:#0f1833; font-size:13px; opacity:.9; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div><strong>Adicionar item</strong></div>
+    <div><a href="items.html">← Voltar</a></div>
+  </div>
+
+  <div class="wrap">
+    <div class="box">
+      <div class="muted">Cadastre um item para alugar dentro do seu condomínio.</div>
+      <div class="tag">MVP: sem upload de foto (imagem padrão)</div>
+
+      <form id="form">
+        <label>Nome do item</label>
+        <input type="text" id="name" placeholder="Ex: Mala de viagem grande" required />
+
+        <div class="row">
+          <div>
+            <label>Categoria</label>
+            <select id="category">
+              <option>Ferramentas</option>
+              <option>Cozinha</option>
+              <option>Viagem</option>
+              <option>Eletrônicos</option>
+              <option>Eletrodomésticos</option>
+              <option>Outros</option>
+            </select>
+          </div>
+          <div>
+            <label>Valor por dia (R$)</label>
+            <input type="number" id="price" placeholder="Ex: 15" required />
+          </div>
+        </div>
+
+        <label>Observações</label>
+        <textarea id="notes" placeholder="Ex: devolver como pegou, retirar na portaria, etc."></textarea>
+
+        <button type="submit" id="btn">Publicar item</button>
+        <div id="status" class="muted" style="margin-top:10px;"></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="firebases.js"></script>
+  <script>
+    const form = document.getElementById("form");
+    const statusEl = document.getElementById("status");
+    const btn = document.getElementById("btn");
+
+    let currentUser = null;
+
+    (async () => {
+      try {
+        await window.waitFirebaseReady();
+        window.AuthAPI.onChange((user) => {
+          if (!user) {
+            window.location.href = "login.html";
+            return;
+          }
+          currentUser = user;
+        });
+      } catch (err) {
+        statusEl.textContent = "Erro iniciando: " + (err?.message || err);
+      }
+    })();
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentUser) return;
+
+      const name = document.getElementById("name").value.trim();
+      const category = document.getElementById("category").value;
+      const pricePerDay = document.getElementById("price").value;
+      const notes = document.getElementById("notes").value;
+
+      if (!name || !pricePerDay) {
+        alert("Preencha nome e valor.");
+        return;
+      }
+
+      try {
+        btn.disabled = true;
+        statusEl.textContent = "Publicando…";
+
+        await window.ItemsAPI.addItem({
+          name,
+          category,
+          pricePerDay,
+          notes,
+          ownerUid: currentUser.uid
+        });
+
+        statusEl.textContent = "Publicado! Indo para a lista…";
+        window.location.href = "items.html";
+      } catch (err) {
+        statusEl.textContent = "Erro: " + (err?.message || err);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
