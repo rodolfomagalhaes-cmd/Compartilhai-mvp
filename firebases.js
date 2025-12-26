@@ -1,5 +1,5 @@
 // firebases.js — Firebase compat (HTML puro)
-// MVP SEM FOTO (não usa Storage). Mais estável e não estoura limite.
+// MVP SEM FOTO (não usa Storage). + waitFirebaseReady() para evitar travar as telas.
 
 const firebaseConfig = {
   apiKey: "AIzaSyCUPov_9w1wa1sg-an76PEexvKnoqMijo0",
@@ -11,6 +11,22 @@ const firebaseConfig = {
 };
 
 window.__FIREBASE_READY__ = false;
+
+// ✅ Função que o seu HTML está tentando chamar
+window.waitFirebaseReady = function waitFirebaseReady(timeoutMs = 12000) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    const t = setInterval(() => {
+      if (window.__FIREBASE_READY__ === true) {
+        clearInterval(t);
+        resolve(true);
+      } else if (Date.now() - start > timeoutMs) {
+        clearInterval(t);
+        reject(new Error("Firebase não ficou pronto a tempo (timeout)."));
+      }
+    }, 50);
+  });
+};
 
 (function loadFirebaseCompat(){
   const urls = [
@@ -47,7 +63,7 @@ window.__FIREBASE_READY__ = false;
       };
 
       window.ItemsAPI = {
-        // ✅ MVP: grava SEM foto (evita timeouts e gasto)
+        // ✅ MVP: grava SEM foto
         async addItem({ name, category, pricePerDay, notes, ownerUid }) {
           await db.collection("items").add({
             name: String(name || "").trim(),
@@ -55,15 +71,16 @@ window.__FIREBASE_READY__ = false;
             pricePerDay: Number(pricePerDay || 0),
             notes: String(notes || "").trim(),
             ownerUid: ownerUid || null,
-            createdAt: Date.now() // ✅ simples e estável no MVP
+            createdAt: Date.now()
           });
           return true;
         },
 
-        // ✅ MVP: lista SEM orderBy pra não travar
+        // ✅ MVP: lista sem orderBy (evita travar por índice/campo)
         async listItems() {
           const snap = await db.collection("items").get();
-          return snap.docs.map(d => ({ id: d.id, ...d.data() }))
+          return snap.docs
+            .map(d => ({ id: d.id, ...d.data() }))
             .sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
         }
       };
