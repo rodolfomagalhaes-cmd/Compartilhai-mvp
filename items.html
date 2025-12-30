@@ -9,16 +9,23 @@
     :root{
       --bg:#070a14;
       --panel:#0c1226;
+      --panel2:#0b1020;
       --line: rgba(255,255,255,.12);
-      --txt:#fff;
+      --txt:#ffffff;
       --muted: rgba(255,255,255,.72);
+      --muted2: rgba(255,255,255,.55);
       --brand:#4f7cff;
-      --danger:#ff4f4f;
-      --ok:#2ecc71;
+      --ok:#23c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
     }
-    *{box-sizing:border-box}
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+
     body{
-      margin:0; min-height:100vh;
+      margin:0;
       font-family: Arial, sans-serif;
       color:var(--txt);
       background:
@@ -26,231 +33,490 @@
         radial-gradient(900px 500px at 90% 20%, rgba(0,255,199,.12), transparent 55%),
         var(--bg);
     }
-    .wrap{max-width:1100px; margin:0 auto; padding:18px 16px 40px;}
-    .top{
-      display:flex; gap:12px; align-items:center; justify-content:space-between;
-      margin-bottom:14px;
+
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 14px 120px;
     }
+
+    /* Topbar */
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 14px;
+      background: linear-gradient(180deg, rgba(12,18,38,.92), rgba(11,16,32,.92));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 10px;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+    }
+
     .brand{
-      font-weight:900; letter-spacing:-.2px; font-size:18px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width: 160px;
     }
+    .logo{
+      width:34px;height:34px;
+      border-radius: 10px;
+      background: radial-gradient(circle at 30% 30%, rgba(79,124,255,.9), rgba(79,124,255,.15));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 10px 30px rgba(79,124,255,.25);
+    }
+    .brand h1{
+      font-size: 14px;
+      margin:0;
+      line-height:1.1;
+      letter-spacing:-.2px;
+    }
+    .brand small{
+      display:block;
+      color: var(--muted2);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
     .btn{
       border:1px solid var(--line);
       background: rgba(255,255,255,.06);
       color: var(--txt);
-      padding:10px 14px;
-      border-radius:12px;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 800;
+      font-size: 13px;
+      cursor:pointer;
       text-decoration:none;
-      cursor:pointer;
-      font-weight:800;
-    }
-    .btn.primary{
-      background: linear-gradient(180deg, var(--brand), #3f68ff);
-      border-color: transparent;
-      box-shadow: 0 12px 30px rgba(79,124,255,.25);
-    }
-    .panel{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.05);
-      border-radius:18px;
-      padding:16px;
-    }
-    .chips{display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 14px;}
-    .chip{
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      color: var(--muted);
-      font-weight:800;
-      cursor:pointer;
-      font-size:13px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
       user-select:none;
     }
-    .chip.active{
-      background: rgba(79,124,255,.18);
-      border-color: rgba(79,124,255,.35);
-      color:#fff;
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); }
+    .btn-primary{
+      background: linear-gradient(180deg, var(--brand), #3f68ff);
+      border-color: rgba(255,255,255,.12);
+      box-shadow: 0 14px 40px rgba(79,124,255,.25);
+    }
+    .btn-primary:hover{ box-shadow: 0 18px 44px rgba(79,124,255,.35); }
+    .btn-danger{
+      background: rgba(239,68,68,.14);
+      border-color: rgba(239,68,68,.35);
     }
 
-    .status{
-      margin:10px 0 0;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.18);
+    /* Headline area */
+    .headline{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:14px;
+      margin: 18px 2px 12px;
+    }
+    .headline h2{
+      margin:0;
+      font-size: 18px;
+      letter-spacing: -.3px;
+    }
+    .headline p{
+      margin:6px 0 0;
       color: var(--muted);
-      font-size:13px;
-      line-height:1.35;
-      white-space: pre-wrap;
+      font-size: 13px;
+      max-width: 640px;
     }
-    .status.ok{border-color: rgba(46,204,113,.35); color: rgba(46,204,113,.95);}
-    .status.err{border-color: rgba(255,79,79,.35); color: rgba(255,79,79,.95);}
 
+    /* Filters */
+    .filters{
+      display:flex;
+      flex-wrap: wrap;
+      gap:10px;
+      margin: 14px 0 14px;
+    }
+    .chip{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 13px;
+      cursor:pointer;
+      transition: background .12s ease, transform .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .chip:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
+    .chip.active{
+      color: #fff;
+      border-color: rgba(79,124,255,.55);
+      background: rgba(79,124,255,.18);
+      box-shadow: 0 14px 30px rgba(79,124,255,.14);
+    }
+
+    /* Grid list */
     .grid{
       display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
-      gap:12px;
-      margin-top:14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 12px;
     }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px){
+      .grid{ grid-template-columns: 1fr; }
+      .brand{ min-width: unset; }
+    }
+
     .card{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      border-radius:14px;
-      padding:14px;
+      background: linear-gradient(180deg, rgba(12,18,38,.92), rgba(11,16,32,.92));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow:hidden;
+      position:relative;
     }
-    .title{font-weight:900; margin:0 0 6px;}
-    .meta{color:var(--muted); font-size:13px; margin:0 0 10px;}
-    .price{font-weight:900; color:var(--brand); margin-top:8px;}
-    .empty{
+    .card .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size: 12px;
       color: var(--muted);
-      padding:18px;
-      text-align:center;
-      border:1px dashed rgba(255,255,255,.25);
-      border-radius:14px;
-      margin-top:12px;
-      background: rgba(255,255,255,.03);
+      font-weight: 900;
+    }
+    .card h3{
+      margin:0;
+      font-size: 16px;
+      letter-spacing: -.25px;
+      line-height: 1.25;
+    }
+    .card .notes{
+      margin:0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      min-height: 34px;
+    }
+    .card .row{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .price{
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--brand);
+      white-space:nowrap;
+    }
+
+    .card .ghost-btn{
+      width: 100%;
+      justify-content: center;
+      padding: 12px;
+      border-radius: 14px;
+      font-size: 13px;
+    }
+
+    /* States */
+    .state{
+      margin-top: 14px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      color: var(--muted);
+      box-shadow: var(--shadow);
+    }
+    .state strong{ color:#fff; }
+
+    .spinner{
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,.25);
+      border-top-color: rgba(255,255,255,.9);
+      display:inline-block;
+      animation: spin 0.9s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg);} }
+
+    /* Floating add button */
+    .fab{
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 99;
+      background: linear-gradient(180deg, var(--brand), #3f68ff);
+      color: #fff;
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 16px;
+      font-weight: 900;
+      box-shadow: 0 18px 60px rgba(79,124,255,.35);
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .fab:active{ transform: translateY(1px); }
+    .fab small{ font-weight: 900; opacity:.95; }
+
+    footer{
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      color: var(--muted2);
+      font-size: 12px;
+      opacity: .75;
+      pointer-events:none;
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
 
-    <div class="top">
-      <div class="brand">Compartilhaí / Itens</div>
-      <div style="display:flex; gap:10px; align-items:center;">
-        <a class="btn primary" href="add-item.html">+ Adicionar item</a>
-        <button class="btn" id="logoutBtn">Sair</button>
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Compartilhaí</h1>
+          <small id="userLine">Carregando usuário…</small>
+        </div>
+      </div>
+
+      <div class="actions">
+        <a class="btn" href="index.html">🏠 Início</a>
+        <a class="btn btn-primary" href="add-item.html">➕ Adicionar item</a>
+        <button class="btn btn-danger" id="logoutBtn">Sair</button>
       </div>
     </div>
 
-    <div class="panel">
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-        <div style="font-weight:900;">Itens disponíveis</div>
-        <button class="btn" id="reloadBtn">Recarregar</button>
-      </div>
-
-      <div class="chips" id="chips">
-        <span class="chip active" data-cat="Todos">Todos</span>
-        <span class="chip" data-cat="Ferramentas">Ferramentas</span>
-        <span class="chip" data-cat="Cozinha">Cozinha</span>
-        <span class="chip" data-cat="Viagem">Viagem</span>
-        <span class="chip" data-cat="Eletrônicos">Eletrônicos</span>
-        <span class="chip" data-cat="Outros">Outros</span>
-      </div>
-
-      <div id="status" class="status">Carregando itens...</div>
-
-      <div id="list" class="grid" style="display:none;"></div>
-      <div id="empty" class="empty" style="display:none;">
-        Nenhum item cadastrado ainda.
+    <div class="headline">
+      <div>
+        <h2>Itens disponíveis</h2>
+        <p>
+          Selecione uma categoria para filtrar. No MVP, o botão “Reservar” pode ficar como demonstração visual.
+        </p>
       </div>
     </div>
+
+    <div class="filters" id="filters">
+      <div class="chip active" data-cat="Todos">Todos</div>
+      <div class="chip" data-cat="Ferramentas">Ferramentas</div>
+      <div class="chip" data-cat="Cozinha">Cozinha</div>
+      <div class="chip" data-cat="Viagem">Viagem</div>
+      <div class="chip" data-cat="Eletrônicos">Eletrônicos</div>
+      <div class="chip" data-cat="Outros">Outros</div>
+    </div>
+
+    <div id="stateBox" class="state">
+      <span class="spinner"></span>
+      <strong>Carregando itens…</strong> Aguarde alguns segundos.
+    </div>
+
+    <div id="grid" class="grid" style="display:none;"></div>
+
   </div>
 
-  <!-- ✅ IMPORTANTE: o firebases.js tem que carregar ANTES do script abaixo -->
+  <button class="fab" onclick="location.href='add-item.html'">
+    ➕ <small>Novo item</small>
+  </button>
+
+  <footer>MVP — Compartilhaí ©</footer>
+
+  <!-- IMPORTANTE:
+       Mantive seu padrão de projeto: arquivo do Firebase e script principal.
+       Se seus nomes forem diferentes, me fala que eu ajusto.
+  -->
   <script src="firebases.js"></script>
+  <script src="script.js"></script>
 
   <script>
-    const statusEl = document.getElementById("status");
-    const listEl = document.getElementById("list");
-    const emptyEl = document.getElementById("empty");
-    const reloadBtn = document.getElementById("reloadBtn");
+    // =========================
+    // FALLBACK: waitFirebaseReady (pra evitar o erro "window.waitFirebaseReady is not a function")
+    // =========================
+    if (typeof window.waitFirebaseReady !== "function") {
+      window.waitFirebaseReady = function(timeoutMs = 8000) {
+        return new Promise((resolve, reject) => {
+          const start = Date.now();
+          const tick = () => {
+            // alguns projetos setam window.__FIREBASE_READY__ = true
+            const readyFlag = (window.__FIREBASE_READY__ === true);
+            const hasAuthApi = (typeof window.AuthAPI !== "undefined");
+            const hasItemsApi = (typeof window.ItemsAPI !== "undefined");
+
+            if (readyFlag || (hasAuthApi && hasItemsApi)) return resolve(true);
+            if (Date.now() - start > timeoutMs) return reject(new Error("Firebase não ficou pronto a tempo."));
+            setTimeout(tick, 120);
+          };
+          tick();
+        });
+      };
+    }
+
+    // =========================
+    // UI helpers
+    // =========================
+    const stateBox = document.getElementById("stateBox");
+    const grid = document.getElementById("grid");
+    const filters = document.getElementById("filters");
     const logoutBtn = document.getElementById("logoutBtn");
-    const chips = document.getElementById("chips");
+    const userLine = document.getElementById("userLine");
 
     let currentCat = "Todos";
     let allItems = [];
 
-    function setStatus(msg, type){
-      statusEl.textContent = msg;
-      statusEl.className = "status" + (type ? " " + type : "");
+    function setState(html, showSpinner=true){
+      stateBox.style.display = "block";
+      grid.style.display = "none";
+      stateBox.innerHTML = (showSpinner ? '<span class="spinner"></span>' : '') + html;
     }
 
-    function withTimeout(promise, ms, label){
-      return new Promise((resolve, reject) => {
-        const t = setTimeout(() => reject(new Error(label + " (timeout)")), ms);
-        promise.then(v => { clearTimeout(t); resolve(v); })
-               .catch(e => { clearTimeout(t); reject(e); });
-      });
+    function showGrid(){
+      stateBox.style.display = "none";
+      grid.style.display = "grid";
+    }
+
+    function emojiFor(cat){
+      const map = {
+        "Ferramentas":"🔧",
+        "Cozinha":"🍳",
+        "Viagem":"🧳",
+        "Eletrônicos":"⚡",
+        "Outros":"📦"
+      };
+      return map[cat] || "📌";
+    }
+
+    function money(v){
+      const n = Number(v || 0);
+      if (Number.isNaN(n)) return "R$ 0 / dia";
+      return "R$ " + n.toFixed(0) + " / dia";
     }
 
     function render(){
-      const items = (currentCat === "Todos")
+      const list = (currentCat === "Todos")
         ? allItems
-        : allItems.filter(it => (it.category || "Outros") === currentCat);
+        : allItems.filter(x => (x.category || x.cat) === currentCat);
 
-      listEl.innerHTML = "";
-      if (!items.length){
-        listEl.style.display = "none";
-        emptyEl.style.display = "block";
+      if (!list.length){
+        setState(`<strong>Nenhum item encontrado</strong><br><span style="color:rgba(255,255,255,.65)">Tente outra categoria ou adicione um novo item.</span>`, false);
         return;
       }
 
-      emptyEl.style.display = "none";
-      listEl.style.display = "grid";
+      grid.innerHTML = list.map(item => {
+        const name = item.name || "Item";
+        const category = item.category || item.cat || "Outros";
+        const notes = item.notes || item.obs || "";
+        const price = item.pricePerDay ?? item.price ?? item.valor ?? 0;
 
-      items.forEach(it => {
-        const div = document.createElement("div");
-        div.className = "card";
-        div.innerHTML = `
-          <div class="title">${escapeHtml(it.name || "Item sem nome")}</div>
-          <div class="meta">Categoria: <b>${escapeHtml(it.category || "Outros")}</b></div>
-          <div class="meta">${escapeHtml(it.notes || "")}</div>
-          <div class="price">R$ ${Number(it.pricePerDay || 0).toFixed(0)} / dia</div>
+        return `
+          <div class="card">
+            <div class="tag">${emojiFor(category)} ${category}</div>
+            <h3>${escapeHtml(name)}</h3>
+            <p class="notes">${escapeHtml(notes || "Sem observações.")}</p>
+            <div class="row">
+              <div class="price">${money(price)}</div>
+            </div>
+            <button class="btn ghost-btn" onclick="alert('MVP: reserva será implementada depois.')">Reservar</button>
+          </div>
         `;
-        listEl.appendChild(div);
-      });
+      }).join("");
+
+      showGrid();
     }
 
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, m => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
-      }[m]));
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
     }
 
-    async function loadItems(){
-      setStatus("Carregando itens...", "");
-      listEl.style.display = "none";
-      emptyEl.style.display = "none";
-
-      try{
-        // 1) Espera Firebase ficar pronto (se der erro, ele APARECE aqui)
-        await withTimeout(window.waitFirebaseReady(12000), 13000, "Firebase não ficou pronto");
-
-        // 2) Puxa itens (se permissão/erro de Firestore, também aparece)
-        const items = await withTimeout(window.ItemsAPI.listItems(), 12000, "Falha ao listar itens");
-        allItems = Array.isArray(items) ? items : [];
-
-        setStatus("✅ Itens carregados: " + allItems.length, "ok");
+    // =========================
+    // Hooks
+    // =========================
+    filters.querySelectorAll(".chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        filters.querySelectorAll(".chip").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentCat = btn.dataset.cat;
         render();
-
-      } catch(err){
-        // Mostra o erro na tela (pra parar de ficar no escuro)
-        setStatus("❌ ERRO AO CARREGAR:\n" + (err && err.message ? err.message : String(err)), "err");
-      }
-    }
-
-    chips.addEventListener("click", (e) => {
-      const b = e.target.closest(".chip");
-      if (!b) return;
-      document.querySelectorAll(".chip").forEach(x => x.classList.remove("active"));
-      b.classList.add("active");
-      currentCat = b.dataset.cat;
-      render();
+      });
     });
-
-    reloadBtn.addEventListener("click", loadItems);
 
     logoutBtn.addEventListener("click", async () => {
       try{
-        if (window.AuthAPI) await window.AuthAPI.logout();
-      } catch(e){}
-      window.location.href = "login.html";
+        if (window.AuthAPI && typeof AuthAPI.logout === "function") {
+          await AuthAPI.logout();
+        }
+      }catch(e){}
+      location.href = "login.html";
     });
 
-    // carrega ao abrir
-    loadItems();
+    // =========================
+    // Load
+    // =========================
+    async function boot(){
+      try{
+        setState(`<strong>Carregando itens…</strong> Aguarde alguns segundos.`);
+        await window.waitFirebaseReady(10000);
+
+        // Protege rota (se seu AuthAPI existir)
+        if (window.AuthAPI && typeof AuthAPI.onChange === "function") {
+          AuthAPI.onChange((user) => {
+            if (!user) {
+              location.href = "login.html";
+              return;
+            }
+            userLine.textContent = user.email ? `Logado: ${user.email}` : "Logado";
+          });
+        } else {
+          userLine.textContent = "MVP";
+        }
+
+        // Busca itens (se seu ItemsAPI existir)
+        if (!window.ItemsAPI || typeof ItemsAPI.list !== "function") {
+          setState(`<strong>ItensAPI não encontrada.</strong><br><span style="color:rgba(255,255,255,.65)">Confere se o arquivo <b>firebases.js</b> está exportando <b>ItemsAPI.list()</b>.</span>`, false);
+          return;
+        }
+
+        allItems = await ItemsAPI.list();
+        if (!Array.isArray(allItems)) allItems = [];
+        render();
+
+      } catch(err){
+        console.error(err);
+        setState(`<strong>Não consegui carregar os itens.</strong><br><span style="color:rgba(255,255,255,.65)">${escapeHtml(err.message || err)}</span>`, false);
+      }
+    }
+
+    boot();
   </script>
 </body>
 </html>
