@@ -1,78 +1,77 @@
-<!-- Firebase SDKs -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import {
-    getAuth,
-    onAuthStateChanged,
-    signInWithEmailAndPassword,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import {
-    getFirestore,
-    collection,
-    addDoc,
-    getDocs,
-    query,
-    orderBy,
-    serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// firebases.js (SEM <script> aqui dentro)
 
-  // 🔐 CONFIGURAÇÃO FIREBASE (MANTIVE GENÉRICA — SEUS DADOS JÁ DEVEM ESTAR AQUI)
-  const firebaseConfig = {
-    apiKey: "SUA_API_KEY",
-    authDomain: "SEU_AUTH_DOMAIN",
-    projectId: "SEU_PROJECT_ID",
-    storageBucket: "SEU_STORAGE_BUCKET",
-    messagingSenderId: "SEU_MESSAGING_ID",
-    appId: "SEU_APP_ID"
-  };
+// ✅ Sua config (NÃO deixe com "SUA_API_KEY")
+// Cole sua config real aqui
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_AUTH_DOMAIN",
+  projectId: "SEU_PROJECT_ID",
+  storageBucket: "SEU_STORAGE_BUCKET",
+  messagingSenderId: "SEU_MESSAGING_ID",
+  appId: "SEU_APP_ID"
+};
 
-  // Inicializa Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+let _readyResolve, _readyReject;
+const _readyPromise = new Promise((res, rej) => {
+  _readyResolve = res;
+  _readyReject = rej;
+});
 
-  /* ==========================
-     FIREBASE READY (CORRIGE ERRO)
-     ========================== */
-  window.waitFirebaseReady = () => {
-    return Promise.resolve();
-  };
+// ✅ Função que o site está esperando existir
+window.waitFirebaseReady = () => _readyPromise;
 
-  /* ==========================
-     AUTH API
-     ========================== */
-  window.AuthAPI = {
-    login: (email, password) =>
-      signInWithEmailAndPassword(auth, email, password),
+// Carrega os módulos do Firebase e expõe APIs no window
+(async () => {
+  try {
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
+    const {
+      getAuth,
+      onAuthStateChanged,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signOut
+    } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
 
-    logout: () => signOut(auth),
+    const {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      query,
+      orderBy,
+      serverTimestamp
+    } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
 
-    onChange: (cb) => onAuthStateChanged(auth, cb)
-  };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  /* ==========================
-     ITEMS API
-     ========================== */
-  window.ItemsAPI = {
-    async addItem(data) {
-      await addDoc(collection(db, "items"), {
-        ...data,
-        createdAt: serverTimestamp()
-      });
-    },
+    window.AuthAPI = {
+      login: (email, password) => signInWithEmailAndPassword(auth, email, password),
+      create: (email, password) => createUserWithEmailAndPassword(auth, email, password),
+      logout: () => signOut(auth),
+      onChange: (cb) => onAuthStateChanged(auth, cb),
+      _auth: auth
+    };
 
-    async getItems() {
-      const q = query(
-        collection(db, "items"),
-        orderBy("createdAt", "desc")
-      );
+    window.ItemsAPI = {
+      addItem: async (data) => {
+        await addDoc(collection(db, "items"), {
+          ...data,
+          createdAt: serverTimestamp()
+        });
+      },
+      getItems: async () => {
+        const q = query(collection(db, "items"), orderBy("createdAt", "desc"));
+        const snap = await getDocs(q);
+        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      },
+      _db: db
+    };
 
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-    }
-  };
-</script>
+    _readyResolve(true);
+  } catch (e) {
+    console.error("Erro carregando Firebase:", e);
+    _readyReject(e);
+  }
+})();
